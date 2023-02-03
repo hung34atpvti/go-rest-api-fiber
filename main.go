@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"rest-api/router"
 )
 
 func main() {
@@ -12,14 +13,7 @@ func main() {
 
 	app.Static("/", "./public")
 
-	app.Use(func(c *fiber.Ctx) error {
-
-		return c.Next()
-	})
-
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	router.RegisterRoutes(app)
 
 	// Last middleware to match anything
 	app.Use(func(c *fiber.Ctx) error {
