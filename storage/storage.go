@@ -1,13 +1,9 @@
 package storage
 
-import (
-	"database/sql"
-	"rest-api/database/mysql"
-	"rest-api/database/postgres"
-)
+import "database/sql"
 
 type Storage interface {
-	Query(query string) error
+	Query(query string) (*sql.Rows, error)
 }
 
 var DB Storage
@@ -17,7 +13,7 @@ func New(dbType string) error {
 		DB = NewPostgresStorage()
 	}
 	if dbType == "mysql" {
-		DB = mysql.DB
+		DB = NewMysqlStorage()
 	}
 	return nil
 }

@@ -17,8 +17,16 @@ func FindById(c *fiber.Ctx) error {
 }
 
 func Find(c *fiber.Ctx) error {
+	data, err := GetOrganizations()
+	if err != nil {
+		return c.Status(500).JSON(&fiber.Map{
+			"message": "error",
+			"error": err,
+		})
+	}
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "Get Successfully",
+		"data": data,
 	})
 }
 

@@ -6,3 +6,7 @@ type Organization struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
+
+type Organizations struct {
+	Organizations []Organization `json:"organizations"`
+}
