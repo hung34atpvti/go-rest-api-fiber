@@ -5,16 +5,12 @@ import (
 	"rest-api/database/mysql"
 )
 
-type MysqlStorage struct {
-	db *sql.DB
-}
+type MysqlStorage struct {}
 
 func NewMysqlStorage() *MysqlStorage {
-	s := new(MysqlStorage)
-	s.db = mysql.DB
-	return s
+	return &MysqlStorage{}
 }
 
 func (s *MysqlStorage) Query(query string)  (*sql.Rows, error) {
-	return s.db.Query(query)
+	return mysql.DB.Query(query)
 }

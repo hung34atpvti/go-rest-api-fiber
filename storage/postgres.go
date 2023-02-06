@@ -5,16 +5,12 @@ import (
 	"rest-api/database/postgres"
 )
 
-type PostgresStorage struct {
-	db *sql.DB
-}
+type PostgresStorage struct {}
 
 func NewPostgresStorage() *PostgresStorage {
-	s := new(PostgresStorage)
-	s.db = postgres.DB
-	return s
+	return &PostgresStorage{}
 }
 
 func (s *PostgresStorage) Query(query string)  (*sql.Rows, error) {
-	return s.db.Query(query)
+	return postgres.DB.Query(query)
 }
