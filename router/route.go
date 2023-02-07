@@ -13,9 +13,9 @@ func RegisterRoutes(app *fiber.App) {
 	})
 
 	//organization route
-	apiV1.Get("/organizations/organization", organization.Find)
-	apiV1.Get("/organizations/organization/:id", organization.FindById)
-	apiV1.Post("/organizations/organization", organization.Create)
+	apiV1.Get("/organizations/organization", organization.GetOrganizationsAndPagination)
+	apiV1.Get("/organizations/organization/:id", organization.GetOrganizationById)
+	apiV1.Post("/organizations/organization", organization.CreateOrganization)
 	apiV1.Put("/organizations/organization/:id", organization.Update)
 	apiV1.Delete("/organizations/organization/:id", organization.Remove)
 

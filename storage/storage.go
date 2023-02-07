@@ -2,17 +2,24 @@ package storage
 
 import "database/sql"
 
+type Type int
+
+const (
+	POSTGRES = iota
+	MYSQL
+)
+
 type Storage interface {
-	Query(query string) (*sql.Rows, error)
+	Query (string, []any) (*sql.Rows, error)
 }
 
 var DB Storage
 
-func New(dbType string) error {
-	if dbType == "postgres" {
+func NewStorage(t Type) error {
+	if t == POSTGRES {
 		DB = NewPostgresStorage()
 	}
-	if dbType == "mysql" {
+	if t == MYSQL {
 		DB = NewMysqlStorage()
 	}
 	return nil

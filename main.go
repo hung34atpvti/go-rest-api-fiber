@@ -11,7 +11,7 @@ import (
 
 func main() {
 	if err := postgres.Connect(); err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	app := fiber.New()

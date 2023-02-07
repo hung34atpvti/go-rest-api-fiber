@@ -2,9 +2,9 @@ package organization
 
 //Organization struct
 type Organization struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
+	Id          int    `json:"id" query:"id"`
+	Name        string `json:"name" query:"name"`
+	Description string `json:"description" query:"description"`
 }
 
 type Organizations struct {

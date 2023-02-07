@@ -11,6 +11,6 @@ func NewPostgresStorage() *PostgresStorage {
 	return &PostgresStorage{}
 }
 
-func (s *PostgresStorage) Query(query string)  (*sql.Rows, error) {
-	return postgres.DB.Query(query)
+func (s *PostgresStorage) Query(query string, params []any)  (*sql.Rows, error) {
+	return postgres.DB.Query(query, params...)
 }
