@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	_ "github.com/lib/pq"
 	"log"
+	"rest-api/config"
 	"rest-api/database/postgres"
 	"rest-api/router"
 )
@@ -27,5 +28,5 @@ func main() {
 		return c.SendStatus(404) // => 404 "Not Found"
 	})
 
-	app.Listen(":3000")
+	app.Listen(":" + config.Config("PORT"))
 }
