@@ -5,12 +5,12 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	_ "github.com/lib/pq"
 	"log"
-	"rest-api/database/postgres"
+	"rest-api/database/postgresdb"
 	"rest-api/router"
 )
 
 func main() {
-	if err := postgres.Connect(); err != nil {
+	if err := postgresdb.Connect(); err != nil {
 		log.Println(err)
 	}
 

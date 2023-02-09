@@ -1,109 +1,45 @@
 package organization
 
 import (
-	"database/sql"
-	"log"
-	"rest-api/storage"
-	"strconv"
+	"rest-api/database/postgresdb"
 )
 
-func FindAllOrganizations(offset int, limit int) ([]Organization, error) {
-	err := storage.NewStorage(storage.POSTGRES)
-	if err != nil {
-		log.Println(err)
+func FindAllOrganizations(offset int, limit int) (*[]Organization, error) {
+	data := make([]Organization, 0, 0)
+	result := postgresdb.DB.Find(&data).Limit(limit).Offset(offset)
+	if result.Error != nil {
+		return nil, result.Error
 	}
-	query := "SELECT * FROM organization"
-	query = query + " OFFSET " + strconv.Itoa(offset) + " LIMIT " + strconv.Itoa(limit)
-	params := make([]any, 0, 0)
-	rows, err := storage.DB.Query(query, params)
-	if err != nil {
-		log.Println(err)
-	}
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(rows)
-	result := Organizations{}
-
-	for rows.Next() {
-		organization := Organization{}
-		err := rows.Scan(&organization.Id, &organization.Name, &organization.Description)
-		// Exit if we get an error
-		if err != nil {
-			log.Println(err)
-		}
-
-		// Append Organization to Organizations
-		result.Organizations = append(result.Organizations, organization)
-	}
-	return result.Organizations, err
+	return &data, nil
 }
 
-func CreateOne(organization *Organization) (Organization, error) {
-	err := storage.NewStorage(storage.POSTGRES)
+func CreateOne(organization *Organization) (*Organization, error) {
+	result := postgresdb.DB.Create(&organization)
+	err := result.Error
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	query := "INSERT INTO organization (name, description) VALUES ($1, $2)"
-	params := make([]any, 0, 0)
-	params = append(params, organization.Name)
-	params = append(params, organization.Description)
-	rows, err := storage.DB.Query(query, params)
-	if err != nil {
-		log.Println(err)
-	}
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(rows)
-	result := Organization{}
-	for rows.Next() {
-		organization := Organization{}
-		err := rows.Scan(&organization.Id, &organization.Name, &organization.Description)
-		// Exit if we get an error
-		if err != nil {
-			log.Println(err)
-		}
-
-		result = organization
-	}
-	return result, err
+	return organization, nil
 }
 
-func FindById(id int) (Organization, error) {
-	err := storage.NewStorage(storage.POSTGRES)
+func FindById(id int) (*Organization, error) {
+	organization := Organization{}
+	result := postgresdb.DB.First(&organization, "id = ?", id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &organization, nil
+}
+
+func UpdateById(id int, organization *Organization) (*Organization, error) {
+	_, err := FindById(id)
 	if err != nil {
-		log.Println(err)
+		return nil, err
 	}
-	query := "SELECT * FROM organization WHERE id = $1"
-	params := make([]any, 0, 0)
-	params = append(params, id)
-	rows, err := storage.DB.Query(query, params)
-	if err != nil {
-		log.Println(err)
+	organization.ID = uint(id)
+	result := postgresdb.DB.Save(&organization)
+	if result.Error != nil {
+		return nil, result.Error
 	}
-	defer func(rows *sql.Rows) {
-		err := rows.Close()
-		if err != nil {
-			log.Println(err)
-		}
-	}(rows)
-	result := Organization{}
-
-	for rows.Next() {
-		organization := Organization{}
-		err := rows.Scan(&organization.Id, &organization.Name, &organization.Description)
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		// Append Organization to Organizations
-		result = organization
-	}
-	return result, err
+	return organization, nil
 }

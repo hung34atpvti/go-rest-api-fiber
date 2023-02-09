@@ -2,89 +2,123 @@ package organization
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"rest-api/errorhandler"
 	"rest-api/paging"
 	"strconv"
 )
 
-func CreateOrganization(c *fiber.Ctx) error {
-	organization := new(Organization)
-	if err := c.BodyParser(organization); err != nil {
-		return err
+func CreateOrganizationHandler(c *fiber.Ctx) error {
+	reqDto := &DTO{}
+	if err := c.BodyParser(reqDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
 	}
-	data, err := CreateOne(organization)
+
+	reqOrganization := &Organization{}
+	if err := MapToModel(reqDto, reqOrganization); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	organizationModel, err := CreateOne(reqOrganization)
 	if err != nil {
-		return c.Status(500).JSON(&fiber.Map{
-			"message": "error",
-			"error": err,
-		})
+		return errorhandler.InternalServerError(c, err)
 	}
-	return c.Status(200).JSON(&fiber.Map{
-		"message": "Get Successfully",
-		"data": data,
+
+	organizationDto := &DTO{}
+	if err := MapToDTO(organizationModel, organizationDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	return c.Status(201).JSON(&fiber.Map{
+		"message": "Organization Created",
+		"data":    organizationDto,
 	})
 }
 
-func GetOrganizationById(c *fiber.Ctx) error {
-    idStr := c.Params("id")
-    id, err := strconv.Atoi(idStr)
-    if err != nil {
-		return c.Status(500).JSON(&fiber.Map{
-			"message": "error",
-			"error": err,
-		})
-	}
-	data, err := FindById(id)
+func GetOrganizationByIdHandler(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return c.Status(500).JSON(&fiber.Map{
-			"message": "error",
-			"error": err,
-		})
+		return errorhandler.InternalServerError(c, err)
 	}
-	if data == (Organization{}) {
-		return c.Status(400).JSON(&fiber.Map{
-			"message": "Get Successfully",
-			"err": "Not Found",
-		})
+
+	model, err := FindById(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return errorhandler.BadRequest(c, err)
+		}
+		return errorhandler.InternalServerError(c, err)
 	}
+
+	organizationDto := &DTO{}
+	if err := MapToDTO(model, organizationDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
 	return c.Status(200).JSON(&fiber.Map{
-		"message": "Get Successfully",
-		"data": data,
+		"message": "Get Organization",
+		"data":    organizationDto,
 	})
 }
 
-func GetOrganizationsAndPagination(c *fiber.Ctx) error {
-	pageRequest := new(paging.PageRequest)
+func GetOrganizationsAndPaginationHandler(c *fiber.Ctx) error {
+	pageRequest := &paging.PageRequest{}
 	if err := c.QueryParser(pageRequest); err != nil {
-		return err
+		return errorhandler.InternalServerError(c, err)
 	}
 
 	offset, limit := paging.ConvertToOffsetLimit(pageRequest)
 
-	data, err := FindAllOrganizations(offset, limit)
+	organizationModels, err := FindAllOrganizations(offset, limit)
 	if err != nil {
-		return c.Status(500).JSON(&fiber.Map{
-			"message": "error",
-			"error": err,
-		})
+		return errorhandler.InternalServerError(c, err)
 	}
+
+	organizationDtos := make([]DTO, 0, 0)
+	if err := MapToDTOs(organizationModels, &organizationDtos); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
 	return c.Status(200).JSON(&fiber.Map{
-		"message": "Get Successfully",
-		"data": data,
+		"message": "Get Organizations",
+		"data":    organizationDtos,
 	})
 }
 
-func Update(c *fiber.Ctx) error {
+func UpdateOrganizationHandler(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	reqDto := &DTO{}
+	if err := c.BodyParser(reqDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	reqModel := &Organization{}
+	if err := MapToModel(reqDto, reqModel); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	organizationModel, err := UpdateById(id, reqModel)
+	if err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	organizationDto := &DTO{}
+	if err := MapToDTO(organizationModel, organizationDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
 	return c.Status(200).JSON(&fiber.Map{
-		"message": "Update Successfully",
+		"message": "Organization Updated",
+		"data": organizationDto,
 	})
 }
 
-func Remove(c *fiber.Ctx) error {
+func RemoveOrganizationHandler(c *fiber.Ctx) error {
 	return c.Status(200).JSON(&fiber.Map{
-		"message": "Remove Successfully",
+		"message": "Remove Organization Removed",
 	})
 }
-
-
-
-
