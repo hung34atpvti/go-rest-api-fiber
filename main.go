@@ -1,12 +1,13 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	_ "github.com/lib/pq"
 	"log"
 	"rest-api/database/postgresdb"
 	"rest-api/router"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -27,5 +28,8 @@ func main() {
 		return c.SendStatus(404) // => 404 "Not Found"
 	})
 
-	app.Listen(":3000")
+	if err := app.Listen(":3000"); err != nil {
+		return
+	}
+
 }

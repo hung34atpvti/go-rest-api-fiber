@@ -1,10 +1,11 @@
 package organization
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"rest-api/errorhandler"
 	"rest-api/paging"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func CreateOrganizationHandler(c *fiber.Ctx) error {
@@ -73,7 +74,7 @@ func GetOrganizationsAndPaginationHandler(c *fiber.Ctx) error {
 		return errorhandler.InternalServerError(c, err)
 	}
 
-	organizationDtos := make([]DTO, 0, 0)
+	organizationDtos := make([]DTO, 0)
 	if err := MapToDTOs(organizationModels, &organizationDtos); err != nil {
 		return errorhandler.InternalServerError(c, err)
 	}
@@ -113,12 +114,34 @@ func UpdateOrganizationHandler(c *fiber.Ctx) error {
 
 	return c.Status(200).JSON(&fiber.Map{
 		"message": "Organization Updated",
-		"data": organizationDto,
+		"data":    organizationDto,
 	})
 }
 
 func RemoveOrganizationHandler(c *fiber.Ctx) error {
+	idStr := c.Params("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	model, err := DeleteById(id)
+	if err != nil {
+		if err.Error() == "record not found" {
+			return errorhandler.BadRequest(c, err)
+		}
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	organizationDto := &DTO{}
+	if err := MapToDTO(model, organizationDto); err != nil {
+		return errorhandler.InternalServerError(c, err)
+	}
+
+	organizationDto.Id = id
+
 	return c.Status(200).JSON(&fiber.Map{
-		"message": "Remove Organization Removed",
+		"message": "Organization Removed",
+		"data":    organizationDto,
 	})
 }

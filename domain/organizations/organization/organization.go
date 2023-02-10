@@ -1,18 +1,19 @@
 package organization
 
 import (
-	"gorm.io/gorm"
 	"time"
+
+	"gorm.io/gorm"
 )
 
-//Organization Model struct
+// Organization Model struct
 type Organization struct {
 	gorm.Model
 	Name        string
 	Description string
 }
 
-//DTO struct
+// DTO struct
 type DTO struct {
 	Id          int            `json:"id" query:"id"`
 	Name        string         `json:"name" query:"name"`

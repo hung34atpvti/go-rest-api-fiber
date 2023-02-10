@@ -2,11 +2,12 @@ package postgresdb
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
 	"rest-api/config"
 	"strconv"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -18,6 +19,9 @@ func Connect() error {
 
 	// because our config function returns a string, we are parsing our str to int here - hack ??
 	port, err := strconv.ParseUint(p, 10, 32)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	dsn := fmt.Sprintf(
 		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",

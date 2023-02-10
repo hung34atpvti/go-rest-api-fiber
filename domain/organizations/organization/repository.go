@@ -5,7 +5,7 @@ import (
 )
 
 func FindAllOrganizations(offset int, limit int) (*[]Organization, error) {
-	data := make([]Organization, 0, 0)
+	data := make([]Organization, 0)
 	result := postgresdb.DB.Find(&data).Limit(limit).Offset(offset)
 	if result.Error != nil {
 		return nil, result.Error
@@ -42,4 +42,19 @@ func UpdateById(id int, organization *Organization) (*Organization, error) {
 		return nil, result.Error
 	}
 	return organization, nil
+}
+
+func DeleteById(id int) (*Organization, error) {
+	_, err := FindById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	organization := Organization{}
+	result := postgresdb.DB.Delete(&organization, "id = ?", id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &organization, nil
 }
