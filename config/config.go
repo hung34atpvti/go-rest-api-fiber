@@ -2,11 +2,12 @@ package config
 
 import (
 	"fmt"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
-func Config(key string) string{
+func Config(key string) string {
 
 	// load .env file
 	err := godotenv.Load(".env")

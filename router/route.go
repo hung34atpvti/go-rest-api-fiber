@@ -1,13 +1,14 @@
 package router
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"rest-api/domain/organizations/organization"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func RegisterRoutes(app *fiber.App) {
 
-	apiV1 := app.Group("/api/v1", func (c *fiber.Ctx) error {
+	apiV1 := app.Group("/api/v1", func(c *fiber.Ctx) error {
 		return c.Next()
 	})
 

@@ -9,7 +9,7 @@ type PageRequest struct {
 }
 
 func ConvertToOffsetLimit(pageRequest *PageRequest) (int, int) {
-	offset := pageRequest.Page * pageRequest.Limit + 1
+	offset := pageRequest.Page*pageRequest.Limit + 1
 	limit := 10
 	if pageRequest.Limit != 0 {
 		limit = pageRequest.Limit
