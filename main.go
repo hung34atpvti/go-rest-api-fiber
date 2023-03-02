@@ -2,17 +2,17 @@ package main
 
 import (
 	"log"
-	"rest-api/database/postgresdb"
+	"rest-api/config"
+	"rest-api/database/postgres"
 	"rest-api/router"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	_ "github.com/lib/pq"
 )
 
 func main() {
-	if err := postgresdb.Connect(); err != nil {
-		log.Println(err)
+	if err := postgres.Connect(); err != nil {
+		log.Println(err.Error())
 	}
 
 	app := fiber.New()
@@ -28,7 +28,7 @@ func main() {
 		return c.SendStatus(404) // => 404 "Not Found"
 	})
 
-	if err := app.Listen(":3000"); err != nil {
+	if err := app.Listen(":" + config.Config("PORT")); err != nil {
 		return
 	}
 

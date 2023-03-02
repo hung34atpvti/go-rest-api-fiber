@@ -1,12 +1,12 @@
 package organization
 
 import (
-	"rest-api/database/postgresdb"
+	"rest-api/database/postgres"
 )
 
 func FindAllOrganizations(offset int, limit int) (*[]Organization, error) {
 	data := make([]Organization, 0)
-	result := postgresdb.DB.Find(&data).Limit(limit).Offset(offset)
+	result := postgres.DB.Find(&data).Limit(limit).Offset(offset)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -14,7 +14,7 @@ func FindAllOrganizations(offset int, limit int) (*[]Organization, error) {
 }
 
 func CreateOne(organization *Organization) (*Organization, error) {
-	result := postgresdb.DB.Create(&organization)
+	result := postgres.DB.Create(&organization)
 	err := result.Error
 	if err != nil {
 		return nil, err
@@ -24,7 +24,7 @@ func CreateOne(organization *Organization) (*Organization, error) {
 
 func FindById(id int) (*Organization, error) {
 	organization := Organization{}
-	result := postgresdb.DB.First(&organization, "id = ?", id)
+	result := postgres.DB.First(&organization, "id = ?", id)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -37,7 +37,7 @@ func UpdateById(id int, organization *Organization) (*Organization, error) {
 		return nil, err
 	}
 	organization.ID = uint(id)
-	result := postgresdb.DB.Save(&organization)
+	result := postgres.DB.Save(&organization)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -51,7 +51,7 @@ func DeleteById(id int) (*Organization, error) {
 	}
 
 	organization := Organization{}
-	result := postgresdb.DB.Delete(&organization, "id = ?", id)
+	result := postgres.DB.Delete(&organization, "id = ?", id)
 	if result.Error != nil {
 		return nil, result.Error
 	}

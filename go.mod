@@ -5,7 +5,6 @@ go 1.19
 require (
 	github.com/gofiber/fiber/v2 v2.41.0
 	github.com/joho/godotenv v1.4.0
-	github.com/lib/pq v1.10.7
 	gorm.io/driver/postgres v1.4.7
 	gorm.io/gorm v1.24.5
 )
