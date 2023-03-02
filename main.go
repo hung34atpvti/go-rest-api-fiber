@@ -2,26 +2,28 @@ package main
 
 import (
 	"log"
-	"rest-api/database/postgresdb"
-	"rest-api/router"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	_ "github.com/lib/pq"
 )
 
 func main() {
-	if err := postgresdb.Connect(); err != nil {
-		log.Println(err)
-	}
 
 	app := fiber.New()
 
-	app.Use(logger.New())
-
 	app.Static("/", "./public")
 
-	router.RegisterRoutes(app)
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendString("Hello world!")
+	})
+
+	app.Use(func(c *fiber.Ctx) error {
+		log.Println("There is a middleware")
+		return c.Next()
+	})
+
+	app.Get("/api/v1/organizations/organization", func(c *fiber.Ctx) error {
+		return c.SendString("Hello from organization")
+	})
 
 	// Last middleware to match anything
 	app.Use(func(c *fiber.Ctx) error {
